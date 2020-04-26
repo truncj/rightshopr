@@ -1,6 +1,6 @@
 # rightshopr
 
-Automatically check for ShopRite.com pickup slots and post to [@rightshopr](https://www.twitter.com/rightshopr)
+Automatically check for [ShopRite.com](https://shop.shoprite.com/) pickup slots and post to [@rightshopr](https://www.twitter.com/rightshopr)
 
 **New Jersey**
 * New Milford
