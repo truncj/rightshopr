@@ -10,11 +10,11 @@ Automatically check for [ShopRite.com](https://shop.shoprite.com/) pickup slots 
 * Bloomfield
 * Manahawkin
 
-### Requests
+## Requests
 
 If you'd like additional ShopRite stores to be monitored, please send an email to rightshopr@gmail.com
 
 
-### Run in docker
+## Run in docker
 
 `docker run -d -v {path_to_config}:/config --name shopright notronswanson/shopright:latest`
