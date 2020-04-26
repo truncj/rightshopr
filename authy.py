@@ -6,14 +6,18 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from utils import read_json
 
-creds = read_json('creds')
-
 opts = Options()
-# opts.headless = True
+opts.add_argument('--headless')
+opts.add_argument('--no-sandbox')
+opts.add_argument('--disable-dev-shm-usage')
+opts.add_argument('--window-size=1920,1080')
+
 
 def authenticate():
     cookies = ''
     kv_cookies = ''
+
+    creds = read_json('creds', 'shoprite')
 
     try:
         driver = webdriver.Chrome(options=opts)
@@ -26,6 +30,7 @@ def authenticate():
 
         # switch to login window
         driver.switch_to.window(driver.window_handles[1])
+
         WebDriverWait(driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, 'Email')))
         driver.find_element_by_id('Email').send_keys(creds['username'])
         driver.find_element_by_id('Password').send_keys(creds['password'])
@@ -34,8 +39,12 @@ def authenticate():
         # back to main window
         driver.switch_to.window(driver.window_handles[0])
         cookies = driver.get_cookies()
+
+        if cookies is not None:
+            print('auth success')
     except Exception as e:
         print(f'Error on authentication: {e}')
+        raise
     finally:
         driver.quit()
 

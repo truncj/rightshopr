@@ -1,18 +1,14 @@
-import json
-from webbrowser import Chrome
-
 import requests
-
 import time
 import datetime
-
 import tweepy
+
 from bs4 import BeautifulSoup
 
 from utils import read_json
 import authy
 
-creds = read_json('creds')
+creds = read_json('creds', message='twitter')
 
 auth = tweepy.OAuthHandler(creds['consumer_key'], creds['consumer_secret'])
 auth.set_access_token(creds['access_token'], creds['access_token_secret'])
@@ -31,7 +27,7 @@ index = []
 counter = 0
 
 while 1:
-    print(f'{datetime.datetime.now()} [attempt: {counter}]')
+    print(f'[attempt: {counter}] {datetime.datetime.now()}')
     store_list = read_json('stores')
     for store_name in store_list:
         try:
@@ -87,7 +83,7 @@ while 1:
         except Exception as e:
             print(f'Error on request: {e}')
 
-    timeout = 1
+    timeout = 180
 
     print(f'sleep {timeout}')
     counter += 1

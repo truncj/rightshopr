@@ -1,5 +1,5 @@
 # custom
-creds.json
+config/creds.json
 bin/
 .idea/
 *.log
