@@ -17,4 +17,4 @@ If you'd like additional ShopRite stores to be monitored, please send an email t
 
 ### Run in docker
 
-`docker run -d -v {path_to_config}:/config --name shopright notronswanson/shopright:v0.5`
+`docker run -d -v {path_to_config}:/config --name shopright notronswanson/shopright:latest`
