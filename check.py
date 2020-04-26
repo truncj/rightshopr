@@ -48,9 +48,9 @@ while 1:
                 store_region = soup.find('span', class_='address__region')
 
                 if store_name != None:
-                    store_name.get_text()
-                    store_city.get_text()
-                    store_region.get_text()
+                    store_name = store_name.get_text()
+                    store_city = store_city.get_text()
+                    store_region = store_region.get_text()
                 else:
                     # reauth if empty
                     headers = authy.authenticate()
@@ -60,7 +60,7 @@ while 1:
                 for div in soup.find_all('div', class_='timeslotPicker__timeslotButton--wrap timeslotPicker__cell'):
                     text = str.strip(div.get_text())
                     if text != 'Sold Out':
-                        header = f'{store_name}, {store_city}, {store_region}'
+                        header = f'[{store_name}, {store_city}, {store_region}]'
                         body = f'[{header}]\n{text}'
                         slot_id = header + text
                         if slot_id not in index:
@@ -71,7 +71,7 @@ while 1:
                 if num_slots == 1:
                     api.update_status(body)
                 elif num_slots > 1:
-                    api.update_status(f'{header}\n{num_slots} available slots')
+                    api.update_status(f'[{header}]\n{num_slots} available slots')
                 else:
                     # clear out index for that store when no slots are found
                     for slot_id in index:
