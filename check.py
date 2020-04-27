@@ -15,7 +15,7 @@ payload = "ControllerName=ReserveTimeslot&FulfillmentType=Pickup"
 
 headers = authy.authenticate()
 
-index = []
+index = {}
 counter = 0
 
 while 1:
@@ -54,23 +54,24 @@ while 1:
                     details = str.strip(div.get_text())
                     if details != 'Sold Out':
                         header = f'[{store_name}, {store_city}, {store_region}]'
-                        slot_id = header + details
-                        if slot_id not in index:
+                        slot_id = f'{header}_{details}'
+                        if store_name not in index:
+                            index.setdefault(store_name, [])
+                        if details not in index[store_name]:
                             num_slots += 1
-                            index.append(slot_id)
+                            index[store_name].append(details)
                             print(f'TimeSlot Available: {details}')
 
                 # tweet or clean up
                 if num_slots == 1:
+                    # get the most recently added slot
+                    details = index[store_name][-1]
                     tweet(header, num_slots, store_city, details)
                 elif num_slots > 1:
                     tweet(header, num_slots, store_city)
+                    print('')
                 else:
-                    # clear out index for that store when no slots are found
-                    for slot_id in index:
-                        if slot_id.startswith(store_name):
-                            index.remove(slot_id)
-            #
+                    index[store_name] = []
             else:
                 # if non-200 re-authenticate
                 print(f'Error: {res.status_code} response. Trying to re-authenticate')
