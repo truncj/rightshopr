@@ -1,0 +1,35 @@
+version: '3'
+services:
+  shopright-scraper:
+    container_name: shopright-scraper
+    build: ./shopright-scraper
+    image: notronswanson/shopright-scraper
+    volumes:
+      - ./shopright-scraper/config:/config
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=1
+  shopright-web:
+    container_name: shopright-web
+    build: ./shopright-web
+    image: notronswanson/shopright-web
+    environment:
+      - PYTHONUNBUFFERED=1
+  shopright-ui:
+    stdin_open: true
+    container_name: shopright-ui
+    build: ./shopright-ui
+    image: notronswanson/shopright-ui
+  redis:
+    container_name: redis
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+  haproxy:
+    container_name: haproxy
+    image: "haproxy:1.7"
+    volumes:
+      - ./shopright-haproxy/haproxy:/usr/local/etc/haproxy
+      # - ./shopright-haproxy/ssl:/etc/ssl/
+    ports:
+      - "8000:8000"

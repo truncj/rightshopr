@@ -3,6 +3,7 @@ import datetime
 import json
 import os
 
+import redis
 import tweepy
 
 
@@ -14,7 +15,7 @@ def read_json(name, message=''):
     return data
 
 
-def tweet(header, count, store_city, details=''):
+def tweet(header, new_count, store_city, details=''):
     creds = read_json('creds', message='twitter')
 
     auth = tweepy.OAuthHandler(creds['consumer_key'], creds['consumer_secret'])
@@ -22,11 +23,13 @@ def tweet(header, count, store_city, details=''):
 
     api = tweepy.API(auth)
 
-    body = f'{header}\n{count} available slots\n{details}'
+    body = f'{header}\n{new_count} available slots\n{details}'
 
-    row = [store_city, count, datetime.datetime.now()]
+    row = [store_city, new_count, datetime.datetime.now()]
     write_csv(row)
-    api.update_status(body)
+
+    if os.environ.get('DEBUG') != 1:
+        api.update_status(body)
 
 
 def write_csv(row):
@@ -46,3 +49,14 @@ def write_csv(row):
             csvwriter.writerow(headers)
 
         csvwriter.writerow(row)
+
+
+def write_redis(r_key, r_value, r_name="store_slots"):
+    r = redis.Redis(
+        host='redis',
+        port=6379,
+        password='',
+        decode_responses=True)
+
+    status = r.hset(r_name, r_key, r_value)
+    print(status)

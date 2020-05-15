@@ -1,13 +1,10 @@
-import csv
-
 import requests
 import time
 import datetime
-import tweepy
 
 from bs4 import BeautifulSoup
 
-from utils import read_json, tweet
+from utils import read_json, tweet, write_redis
 
 import authy
 
@@ -49,28 +46,32 @@ while 1:
                     headers = authy.authenticate()
                     break
 
-                num_slots = 0
+                new_slots = 0
+                full_slots = 0
                 for div in soup.find_all('div', class_='timeslotPicker__timeslotButton--wrap timeslotPicker__cell'):
                     details = str.strip(div.get_text())
                     if details != 'Sold Out':
+                        full_slots += 1
                         header = f'[{store_name}, {store_city}, {store_region}]'
                         slot_id = f'{header}_{details}'
                         if store_name not in index:
                             index.setdefault(store_name, [])
                         if details not in index[store_name]:
-                            num_slots += 1
+                            new_slots += 1
                             index[store_name].append(details)
                             print(f'TimeSlot Available: {details}')
 
                 # tweet or clean up
-                if num_slots == 1:
-                    # get the most recently added slot
-                    details = index[store_name][-1]
-                    tweet(header, num_slots, store_city, details)
-                elif num_slots > 1:
-                    tweet(header, num_slots, store_city)
-                    print('')
-                else:
+                # if new_slots == 1:
+                #     # get the most recently added slot
+                #     details = index[store_name][-1]
+                #     tweet(header, new_slots, store_city, details)
+                if new_slots > 0:
+                    tweet(header, new_slots, store_city)
+                    write_redis(store_city, full_slots)
+                elif counter == 0:
+                    write_redis(store_city, full_slots)
+                elif full_slots == 0:
                     index[store_name] = []
             else:
                 # if non-200 re-authenticate
