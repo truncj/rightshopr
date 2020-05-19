@@ -1,3 +1,3 @@
 # rightshopr
 
-[@rightshopr](twitter.com/rightshopr)
+[@rightshopr](https://twitter.com/rightshopr)
