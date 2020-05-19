@@ -4,8 +4,7 @@ import datetime
 
 from bs4 import BeautifulSoup
 
-from utils import read_json, tweet, write_redis
-
+from utils import tweet, read_json, write_store, read_store
 import authy
 
 payload = "ControllerName=ReserveTimeslot&FulfillmentType=Pickup"
@@ -68,11 +67,14 @@ while 1:
                 #     tweet(header, new_slots, store_city, details)
                 if new_slots > 0:
                     tweet(header, new_slots, store_city)
-                    write_redis(store_city, full_slots)
+                    write_store(store_city, full_slots)
                 elif counter == 0:
-                    write_redis(store_city, full_slots)
+                    write_store(store_city, full_slots)
                 elif full_slots == 0:
+                    if read_store(store_city) != 0:
+                        write_store(store_city, full_slots)
                     index[store_name] = []
+
             else:
                 # if non-200 re-authenticate
                 print(f'Error: {res.status_code} response. Trying to re-authenticate')

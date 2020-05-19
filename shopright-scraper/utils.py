@@ -51,7 +51,7 @@ def write_csv(row):
         csvwriter.writerow(row)
 
 
-def write_redis(r_key, r_value, r_name="store_slots"):
+def write_store(r_key, r_value, r_name="store_slots"):
     r = redis.Redis(
         host='redis',
         port=6379,
@@ -59,4 +59,16 @@ def write_redis(r_key, r_value, r_name="store_slots"):
         decode_responses=True)
 
     status = r.hset(r_name, r_key, r_value)
-    print(status)
+    print(f'write_store: {status}')
+
+
+def read_store(r_key, r_name="store_slots"):
+    r = redis.Redis(
+        host='redis',
+        port=6379,
+        password='',
+        decode_responses=True)
+
+    data = int(r.get(r_name, r_key))
+    print(f'read_store: {data}')
+    return data
