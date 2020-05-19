@@ -69,6 +69,6 @@ def read_store(r_key, r_name="store_slots"):
         password='',
         decode_responses=True)
 
-    data = int(r.get(r_name, r_key))
+    data = int(r.hget(r_name, r_key))
     print(f'read_store: {data}')
     return data
